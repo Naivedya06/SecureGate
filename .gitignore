@@ -1,0 +1,37 @@
+﻿# Secure Gate
+
+A custom Zero-Trust TLS 1.3 encrypted proxy tunnel and Windows desktop client with a live IST web admin console.
+
+## Features
+- **Encrypted TLS 1.3 Tunnel:** Routes Windows system HTTP/HTTPS traffic through a cloud VM gateway with QUIC (UDP 443) firewall leak prevention.
+- **High-DPI Windows Client:** Custom 3x supersampled 3D rotating globe toggle, account registration/sign-in, live latency metrics, system tray minimization, and automatic Windows Start Menu & Installed Apps registration.
+- **Cloud Admin Console (/sg-admin):** Password-protected dashboard with IST timestamps, live connected user tracking, grouped website packet inspection, and dynamic domain allow/restrict rules.
+
+## Setup
+1. **Server (Linux VM):** Generate a self-signed TLS certificate (server.crt and server.key), set ADMIN_PASS in server/server.py, and run python3 server.py.
+2. **Client (Windows):** Place server.crt inside client/, update AZURE_SERVER_IP in client/client.py, install dependencies via pip install -r client/requirements.txt, and build SecureGate.exe:
+   `powershell
+   python -c "from client import create_tray_icon_image; img = create_tray_icon_image(True).resize((256, 256)); img.save('securegate.ico', format='ICO', sizes=[(256,256),(64,64),(32,32),(16,16)])"
+   python -m PyInstaller --onefile --noconsole --uac-admin --icon=securegate.ico --hidden-import pystray._win32 --add-data "server.crt;." --name SecureGate client.py
+
+@"
+# Secrets, Certificates & Databases
+*.key
+*.crt
+*.pem
+*.db
+*.sqlite*
+*.log
+.env
+.securegate_session.json
+
+# PyInstaller & Build Artifacts
+build/
+dist/
+*.exe
+*.ico
+*.spec
+*.rar
+*.zip
+__pycache__/
+*.pyc
